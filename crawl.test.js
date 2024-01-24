@@ -1,4 +1,4 @@
-const {normalizeURL} = require('./crawl.js')
+const {normalizeURL,getURLfromHTML} = require('./crawl.js')
 const {test, expect} = require('@jest/globals')
 
 test('normalizeURL protocol', ()=>{
@@ -27,4 +27,22 @@ test('normalizeURL protocol capitlised', ()=>{
     const actual = normalizeURL(input)
     const expected = 'blog.boot.dev/path'
     expect(actual).toEqual(expected)
-}) 
+})
+
+test('getURLfromHTML', ()=>{
+    //backticks are used to input multiline string
+    const inputHTMLBody = `
+    <html>
+    <body>
+    <a href = "https://blog.boot.dev">
+    Boot.dev Blog
+    </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = 'https://blog.boot.dev'
+    const actual = getURLfromHTML(inputHTMLBody, inputBaseURL)
+    // so here we want to get an array of hyperlinks inserted in a webpage
+    const expected = ["https://blog.boot.dev/"]
+    expect(actual).toEqual(expected)
+})

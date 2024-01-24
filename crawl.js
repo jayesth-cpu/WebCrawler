@@ -1,3 +1,20 @@
+//reference with jsdom documentation syntax samajhne ke liye
+const {JSDOM} = require("jsdom")
+
+function getURLfromHTML(htmlBody, baseURL){
+    const urls = []
+    const dom = new JSDOM(htmlBody)
+    const linkElements = dom.window.document.querySelectorAll('a') //here we've passed the <a>tag as an input coz we want all the <a> tags as output
+
+    for(const linkElement of linkElements){
+        const url = linkElement.href
+        if(url.startsWith(baseURL)){
+            urls.push(url)
+        }
+    }
+    return urls
+}
+
 function normalizeURL(urlString){
     const urlObj = new URL(urlString)
     const hostPath =  `${urlObj.hostname}${urlObj.pathname}`
@@ -13,5 +30,6 @@ function normalizeURL(urlString){
 }
 
 module.exports = {
-    normalizeURL
+    normalizeURL,
+    getURLfromHTML
 }
