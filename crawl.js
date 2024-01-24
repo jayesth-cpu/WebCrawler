@@ -9,10 +9,24 @@ function getURLfromHTML(htmlBody, baseURL){
     for(const linkElement of linkElements){
         const url = linkElement.href
         if(url.slice(0,1) ==='/'){
-            urls.push(`${baseURL}${url}`)
+            try{
+                //relative url
+                const urlObj = new URL(`${baseURL}${url}`)
+                urls.push(urlObj.href) //in here we are appending the baseURL with default url
+            }
+            catch(err){
+                console.log(`error with the relative url :${err.message}` )
+            }
         }
         else{
-            urls.push(url)
+            try{
+                //absolute url
+                const urlObj = new URL(url)
+                urls.push(urlObj.href) //in here we are appending the baseURL with default url
+            }
+            catch(err){
+                console.log(`error with the absolute url :${err.message}` )
+            }
         }
     }
     return urls
@@ -26,10 +40,7 @@ function normalizeURL(urlString){
         //above condition is used to remove the last 'slash' from the url like: boot.blog/dev/
     
     }
-    else{
-        return hostPath
-    
-    }
+    return hostPath
 }
 
 module.exports = {
