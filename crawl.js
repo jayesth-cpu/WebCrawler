@@ -8,7 +8,10 @@ function getURLfromHTML(htmlBody, baseURL){
 
     for(const linkElement of linkElements){
         const url = linkElement.href
-        if(url.startsWith(baseURL)){
+        if(url.slice(0,1) ==='/'){
+            urls.push(`${baseURL}${url}`)
+        }
+        else{
             urls.push(url)
         }
     }

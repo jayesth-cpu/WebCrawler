@@ -29,12 +29,30 @@ test('normalizeURL protocol capitlised', ()=>{
     expect(actual).toEqual(expected)
 })
 
-test('getURLfromHTML', ()=>{
+test('getURLfromHTML absolute', ()=>{
     //backticks are used to input multiline string
     const inputHTMLBody = `
     <html>
     <body>
-    <a href = "https://blog.boot.dev">
+    <a href = "https://blog.boot.dev/path/">
+    Boot.dev Blog
+    </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = 'https://blog.boot.dev/path/'
+    const actual = getURLfromHTML(inputHTMLBody, inputBaseURL)
+    // so here we want to get an array of hyperlinks inserted in a webpage
+    const expected = ["https://blog.boot.dev/path/"]
+    expect(actual).toEqual(expected)
+})
+
+test('getURLfromHTML relative', ()=>{
+    //backticks are used to input multiline string
+    const inputHTMLBody = `
+    <html>
+    <body>
+    <a href = "/path/">
     Boot.dev Blog
     </a>
     </body>
@@ -43,6 +61,6 @@ test('getURLfromHTML', ()=>{
     const inputBaseURL = 'https://blog.boot.dev'
     const actual = getURLfromHTML(inputHTMLBody, inputBaseURL)
     // so here we want to get an array of hyperlinks inserted in a webpage
-    const expected = ["https://blog.boot.dev/"]
-    expect(actual).toEqual(expected)
+    const expected = ["https://blog.boot.dev/path/"]
+    expect(actual).toEqual(expected) 
 })
