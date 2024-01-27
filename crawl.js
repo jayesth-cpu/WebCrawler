@@ -1,24 +1,42 @@
 //reference with jsdom documentation syntax samajhne ke liye
 const {JSDOM} = require("jsdom")
 
-async function crawlPage(currentURL){
+async function crawlPage(baseURL, currentURL, pages){    //baseUL will be the starting point like the homepage, currentURL will be the page that we're actively crawling, pages wiil act as an object that will keep a track of all the crawled pages
     console.log(`actively crawling ${currentURL}`)
+    const baseURLobj = new URL(baseURL)
+    const currentURLobj = new URL(currentURL)
+
+    if(baseURLobj.hostname !== currentURLobj.hostname){
+        return pages
+    }
+
+    const normalizedCurrentURL = normalizeURL(currentURL)
+    if(pages[normalizedCurrentURL] > 0){
+        pages[normalizedCurrentURL]++
+        return pages
+    }
+    pages[normalizedCurrentURL] = 1   
     try{
         const resp = await fetch(currentURL)
         if(resp.status  >399){
             console.log(`error in the fetch with status code ${resp.status} on :${currentURL}`)
-            return
+            return pages
         }
         const contentType = resp.headers.get("content-type")
         if(!contentType.includes("text/html")){
             console.log(`non html response content type ${contentType} on :${currentURL}`)
-            return
+            return pages
         }
-        console.log(await resp.text())
+        const htmlBody = await resp.text()
+        const nextURLs = getURLfromHTML(htmlBody, baseURL)
+        for(const nextURL of nextURLs){
+            pages = await crawlPage(baseURL, nextURL, pages)
+        }
     }
     catch(err){
         console.log(`error crawling ${currentURL}: ${err.message}`)
     }
+    return pages
 }
 
 function getURLfromHTML(htmlBody, baseURL){
